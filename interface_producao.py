@@ -48,6 +48,25 @@ def stop_core_back():
     except Exception as e:
         messagebox.showerror("Erro", f"Falha ao finalizar core_back.py:\n{e}")
 
+# Função para parar o processo core_back.py e liberar o dispositivo da câmera
+# def stop_core_back():
+#     try:
+#         # Liberar o dispositivo da câmera
+#         subprocess.run(["sudo", "fuser", "-k", "/dev/video2"], check=True)
+#
+#         # Finalizar o processo core_back.py
+#         result = subprocess.run(["pgrep", "-f", "core_back.py"], capture_output=True, text=True)
+#         if result.returncode == 0:  # Processos encontrados
+#             pids = result.stdout.strip().split('\n')  # Obtém todos os PIDs
+#             for pid in pids:
+#                 os.kill(int(pid), signal.SIGKILL)  # Envia SIGKILL para cada PID
+#             messagebox.showinfo("Sucesso", "Processo core_back.py finalizado com sucesso!")
+#         else:
+#             messagebox.showinfo("Informação", "Nenhum processo core_back.py em execução.")
+#
+#     except Exception as e:
+#         messagebox.showerror("Erro", f"Falha ao finalizar core_back.py ou liberar a câmera:\n{e}")
+
 # Função para iniciar outros scripts
 def run_script(script_name, success_message, error_message):
     try:

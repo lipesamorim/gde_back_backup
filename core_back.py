@@ -29,7 +29,8 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 YOLO_MODEL_BASE_PATH = os.getenv('YOLO_MODEL_BASE_PATH', f'{BASE_PATH}/modelostreinados/')
 
-IP_OCULOS = "192.168.0.102"
+# IP_OCULOS = "192.168.0.102"
+IP_OCULOS = "10.42.0.217"
 
 FPS = 15
 PROCESSING_LIMIT_SECONDS = 5
@@ -284,6 +285,21 @@ class YOLOProcessor:
                 if port.isdigit():
                     self._try_connect(port)
 
+    # def _configure_v4l2loopback(self):
+    #     """
+    #     Carrega o módulo v4l2loopback se ainda não estiver carregado.
+    #     """
+    #     try:
+    #         result = subprocess.run(["lsmod"], capture_output=True, text=True)
+    #         if "v4l2loopback" in result.stdout:
+    #             print("v4l2loopback já está carregado.")
+    #         else:
+    #             result = subprocess.run(["sudo", "modprobe", "v4l2loopback", "exclusive_caps=1"])
+    #             if result.returncode != 0:
+    #                 print("Erro ao configurar v4l2loopback.")
+    #     except Exception as e:
+    #         print(f"Erro ao configurar v4l2loopback: {e}")
+
     def _configure_v4l2loopback(self):
         """
         Carrega o módulo v4l2loopback se ainda não estiver carregado.
@@ -293,9 +309,11 @@ class YOLOProcessor:
             if "v4l2loopback" in result.stdout:
                 print("v4l2loopback já está carregado.")
             else:
-                result = subprocess.run(["sudo", "modprobe", "v4l2loopback", "exclusive_caps=1"])
+                result = subprocess.run(["sudo", "/sbin/modprobe", "v4l2loopback", "exclusive_caps=1"])
                 if result.returncode != 0:
                     print("Erro ao configurar v4l2loopback.")
+                else:
+                    print("v4l2loopback configurado com sucesso.")
         except Exception as e:
             print(f"Erro ao configurar v4l2loopback: {e}")
 
@@ -337,7 +355,7 @@ class YOLOProcessor:
                     "--camera-facing=back",
                     f"--v4l2-sink={VIDEO_DEVICE}",
                     "--no-audio",
-                    "--camera-size=1920x1080",
+                    "--camera-size=1280x720",
                     "--no-window",
                     "--lock-video-orientation=180",
                     "-e"
