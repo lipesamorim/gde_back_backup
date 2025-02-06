@@ -46,7 +46,8 @@ def train_model(model_name, base_path, results_path, log_text, epochs, img_size,
             batch=batch_size,
             task=task,
             project=custom_results_dir,
-            amp=True
+            amp=True,
+            classes=[0,1]
         )
 
         log_text.insert(tk.END, f"[SUCESSO] Treinamento concluído para {model_name}.\n")

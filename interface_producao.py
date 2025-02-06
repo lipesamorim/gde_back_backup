@@ -34,19 +34,23 @@ def run_core_back():
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao executar core_back.py:\n{e}")
 
-# Função para parar o processo core_back.py
+
+# Função para parar processos específicos
 def stop_core_back():
     try:
-        result = subprocess.run(["pgrep", "-f", "core_back.py"], capture_output=True, text=True)
-        if result.returncode == 0:  # Processos encontrados
-            pids = result.stdout.strip().split('\n')  # Obtém todos os PIDs
-            for pid in pids:
-                os.kill(int(pid), signal.SIGKILL)  # Envia SIGKILL para cada PID
-            messagebox.showinfo("Sucesso", "Processo core_back.py finalizado com sucesso!")
-        else:
-            messagebox.showinfo("Informação", "Nenhum processo core_back.py em execução.")
+        processos = ["core_back.py", "adb", "scrcpy", "defeitos_deteccao.py"]
+
+        for processo in processos:
+            result = subprocess.run(["pgrep", "-f", processo], capture_output=True, text=True)
+            if result.returncode == 0:  # Se encontrou processos
+                pids = result.stdout.strip().split('\n')
+                for pid in pids:
+                    os.kill(int(pid), signal.SIGKILL)
+
+        messagebox.showinfo("Sucesso", "Processos finalizados com sucesso!")
     except Exception as e:
-        messagebox.showerror("Erro", f"Falha ao finalizar core_back.py:\n{e}")
+        messagebox.showerror("Erro", f"Falha ao finalizar processos:\n{e}")
+
 
 # Função para parar o processo core_back.py e liberar o dispositivo da câmera
 # def stop_core_back():

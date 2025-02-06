@@ -29,8 +29,7 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 YOLO_MODEL_BASE_PATH = os.getenv('YOLO_MODEL_BASE_PATH', f'{BASE_PATH}/modelostreinados/')
 
-# IP_OCULOS = "192.168.0.102"
-IP_OCULOS = "10.42.0.217"
+IP_OCULOS = "192.168.0.80"
 
 FPS = 15
 PROCESSING_LIMIT_SECONDS = 5
