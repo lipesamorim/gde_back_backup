@@ -254,6 +254,9 @@ class App:
         self.entry_classe = tk.Entry(master, textvariable=self.classe_desejada_var, width=30)
         self.entry_classe.pack(pady=5)
 
+        # Forçar texto em maiúsculo
+        self.classe_desejada_var.trace_add("write", self._forcar_maiusculo)
+
         # Botão para iniciar a detecção (usando tk.Button para poder definir bg/fg)
         self.btn_iniciar = tk.Button(
             master,
@@ -270,6 +273,11 @@ class App:
 
         # Para controle de thread
         self.detection_thread = None
+
+    def _forcar_maiusculo(self, *args):
+        texto_atual = self.classe_desejada_var.get()
+        # Converte para maiúsculo e atualiza a variável
+        self.classe_desejada_var.set(texto_atual.upper())
 
     def log(self, message: str):
         """
