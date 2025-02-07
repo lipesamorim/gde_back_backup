@@ -38,7 +38,7 @@ def run_core_back():
 # Função para parar processos específicos
 def stop_core_back():
     try:
-        processos = ["core_back.py", "adb", "scrcpy", "defeitos_deteccao.py"]
+        processos = ["core_back.py", "adb", "scrcpy", "defeitos_deteccao.py","defeitos_deteccao.py"]
 
         for processo in processos:
             result = subprocess.run(["pgrep", "-f", processo], capture_output=True, text=True)
