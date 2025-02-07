@@ -11,10 +11,10 @@ import tkinter as tk  # <-- Usado para exibir a janelinha de pausa
 # =========================================================================
 # Constantes
 # =========================================================================
-IP_OCULOS = "192.168.0.80"
+IP_OCULOS = "10.42.0.217"
 VIDEO_DEVICE = "/dev/video2"
 SCRCPY_SERVER_PATH = "scrcpy-server"
-YOLO_MODEL_PATH = "/home/amorim/PycharmProjects/gde_back/modelostreinados/VW216-LD2.pt"
+YOLO_MODEL_PATH = "/home/amorim/PycharmProjects/gde_back/modelostreinados/VW216-LD.pt"
 
 # =========================================================================
 # Classe principal: RealWearConnector
@@ -239,7 +239,7 @@ if __name__ == "__main__":
             frame = cv2.rotate(frame, cv2.ROTATE_180)
 
             # 2) Faz inferência YOLOv8
-            results = model.predict(frame, conf=0.25)
+            results = model.predict(frame, conf=0.75)
             annotated_frame = results[0].plot()  # desenha as boxes e labels
 
             # 3) Verifica se há classes diferentes da desejada
@@ -247,12 +247,24 @@ if __name__ == "__main__":
                 detected_classes = [model.model.names[int(cls_idx)] for cls_idx in results[0].boxes.cls]
                 for c in detected_classes:
                     if c != classe_desejada:
-                        # Salva o frame anotado
+                        # =========== NOVA LÓGICA: EXIBIR A CÂMERA POR MAIS 3 SEGUNDOS ===========
+                        start_time = time.time()  # Marca o tempo inicial
+                        while time.time() - start_time < 2:  # Mantém capturando por 2 segundos
+                            ret, frame = connector.cap.read()
+                            if not ret:
+                                print("Erro ao capturar frame durante o delay.")
+                                break
+                            frame = cv2.rotate(frame, cv2.ROTATE_180)
+                            cv2.imshow("RealWear + YOLOv8", frame)
+                            if cv2.waitKey(1) & 0xFF == ord('q'):
+                                break
+
+                        # =========== SALVA O FRAME ATUALIZADO COM AS ANOTAÇÕES ===========
                         filename = f"logsdefeitos/{time.strftime('%Y%m%d-%H%M%S')}_{c}.jpg"
-                        cv2.imwrite(filename, annotated_frame)
+                        cv2.imwrite(filename, annotated_frame)  # Salva o frame anotado
                         print(f"[ALERTA] Classe diferente detectada: {c}. Frame salvo em {filename}")
 
-                        # =========== PAUSA O PROCESSAMENTO E EXIBE O BOTÃO ===========
+                        # =========== PAUSA O PROCESSAMENTO ===========
                         print("Pausando detecção para que o usuário possa decidir continuar...")
                         mostrar_janela_continuar()
                         print("Detecção retomada após clique no botão.\n")
@@ -263,8 +275,8 @@ if __name__ == "__main__":
             # Tecla 'q' para sair
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-        else:
-            time.sleep(1)
+            else:
+                time.sleep(1)
 
     # Finalização
     if connector.cap:

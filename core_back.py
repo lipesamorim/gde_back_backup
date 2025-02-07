@@ -299,22 +299,6 @@ class YOLOProcessor:
     #     except Exception as e:
     #         print(f"Erro ao configurar v4l2loopback: {e}")
 
-    def _configure_v4l2loopback(self):
-        """
-        Carrega o módulo v4l2loopback se ainda não estiver carregado.
-        """
-        try:
-            result = subprocess.run(["lsmod"], capture_output=True, text=True)
-            if "v4l2loopback" in result.stdout:
-                print("v4l2loopback já está carregado.")
-            else:
-                result = subprocess.run(["sudo", "/sbin/modprobe", "v4l2loopback", "exclusive_caps=1"])
-                if result.returncode != 0:
-                    print("Erro ao configurar v4l2loopback.")
-                else:
-                    print("v4l2loopback configurado com sucesso.")
-        except Exception as e:
-            print(f"Erro ao configurar v4l2loopback: {e}")
 
     def _start_camera(self):
         """
