@@ -311,7 +311,7 @@ class App:
             return
 
         self.log(f"Iniciando detecção usando o modelo: {yolo_model_path}")
-        self.log(f"Item desejado: {classe_desejada}")
+        self.log(f"Item para inspeção: {classe_desejada}")
 
         # Carrega o modelo YOLO
         try:
@@ -360,7 +360,7 @@ class App:
                 frame = cv2.rotate(frame, cv2.ROTATE_180)
 
                 # Faz inferência YOLOv8
-                results = self.model.predict(frame, conf=0.75)
+                results = self.model.predict(frame, conf=0.73)
                 annotated_frame = results[0].plot()  # desenha as boxes e labels
 
                 # Verifica se há classes diferentes da desejada
