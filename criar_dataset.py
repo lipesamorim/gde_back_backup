@@ -13,6 +13,9 @@ class DatasetCreatorApp:
         self.root.geometry("720x450")
         self.root.configure(bg="white")  # Fundo branco
 
+        # Diretório base do dataset
+        self.base_dir = "/home/amorim/PycharmProjects/gde_back/treinamento"
+
         # Variáveis para armazenar os inputs
         self.pasta_origem = tk.StringVar()
         self.nome_pasta = tk.StringVar()
@@ -71,7 +74,56 @@ class DatasetCreatorApp:
             self.pasta_origem.set(pasta)
 
     def processar(self):
-        messagebox.showinfo("Sucesso", "Processo finalizado!")  # Apenas para teste
+        pasta_origem = self.pasta_origem.get()
+        nome_pasta = self.nome_pasta.get()
+        num_classes = self.nc.get()
+        nomes_classes = self.names.get()
+
+        if not pasta_origem or not nome_pasta or num_classes <= 0 or not nomes_classes:
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos corretamente.")
+            return
+
+        destino = os.path.join(self.base_dir, nome_pasta)
+        imagens_destino_train = os.path.join(destino, "images", "train")
+        imagens_destino_val = os.path.join(destino, "images", "val")
+        labels_destino_train = os.path.join(destino, "labels", "train")
+        labels_destino_val = os.path.join(destino, "labels", "val")
+
+        # Criando diretórios
+        for path in [imagens_destino_train, imagens_destino_val, labels_destino_train, labels_destino_val]:
+            os.makedirs(path, exist_ok=True)
+
+        # Listar imagens e labels
+        imagens = [f for f in os.listdir(pasta_origem) if f.endswith(('.jpg', '.png', '.jpeg'))]
+        labels = [f.replace('.jpg', '.txt').replace('.png', '.txt').replace('.jpeg', '.txt') for f in imagens]
+
+        # Separar em treino (80%) e validação (20%)
+        data = list(zip(imagens, labels))
+        random.shuffle(data)
+        split = int(0.8 * len(data))
+        treino, validacao = data[:split], data[split:]
+
+        # Copiar arquivos
+        for img, lbl in treino:
+            shutil.copy(os.path.join(pasta_origem, img), imagens_destino_train)
+            if os.path.exists(os.path.join(pasta_origem, lbl)):
+                shutil.copy(os.path.join(pasta_origem, lbl), labels_destino_train)
+
+        for img, lbl in validacao:
+            shutil.copy(os.path.join(pasta_origem, img), imagens_destino_val)
+            if os.path.exists(os.path.join(pasta_origem, lbl)):
+                shutil.copy(os.path.join(pasta_origem, lbl), labels_destino_val)
+
+        # Criar arquivo YAML
+        yaml_content = f"""train: {os.path.abspath(imagens_destino_train)}
+val: {os.path.abspath(imagens_destino_val)}
+nc: {num_classes}
+names: [{', '.join(f'"{name.strip()}"' for name in nomes_classes.split(','))}]
+"""
+        with open(os.path.join(destino, "dataset.yaml"), "w") as f:
+            f.write(yaml_content)
+
+        messagebox.showinfo("Sucesso", f"Dataset criado em: {destino}")
 
 
 if __name__ == "__main__":

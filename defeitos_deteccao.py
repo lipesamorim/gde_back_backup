@@ -6,7 +6,6 @@ import threading
 import cv2
 from ultralytics import YOLO  # <-- Importação do YOLOv8
 import tkinter as tk
-from tkinter import ttk
 from tkinter import messagebox
 
 # =========================================================================
@@ -28,6 +27,7 @@ class RealWearConnector:
 
     def inicializar_camera(self) -> cv2.VideoCapture:
         cap = cv2.VideoCapture(VIDEO_DEVICE)
+        cap.set(cv2.CAP_PROP_FPS, 15)
         if not cap.isOpened():
             logging.error(f"Não foi possível acessar a câmera em {VIDEO_DEVICE}.")
             raise IOError("Falha ao abrir a câmera.")
@@ -315,7 +315,7 @@ class App:
 
         # Carrega o modelo YOLO
         try:
-            self.model = YOLO(yolo_model_path)
+            self.model = YOLO(yolo_model_path).to('cuda')
         except Exception as e:
             messagebox.showerror("Erro ao carregar modelo", str(e))
             return
@@ -360,7 +360,7 @@ class App:
                 frame = cv2.rotate(frame, cv2.ROTATE_180)
 
                 # Faz inferência YOLOv8
-                results = self.model.predict(frame, conf=0.73)
+                results = self.model.predict(source=frame, conf=0.70, verbose=False, device='cuda')
                 annotated_frame = results[0].plot()  # desenha as boxes e labels
 
                 # Verifica se há classes diferentes da desejada
