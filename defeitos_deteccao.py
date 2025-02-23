@@ -41,7 +41,7 @@ class RealWearConnector:
             self.cap = None
 
     def _restart_adb_server(self):
-        result = subprocess.run(["adb", "kill-server"], capture_output=True)
+        result = subprocess.run(["adb", "kill.py-server"], capture_output=True)
         if result.returncode == 0:
             print("Servidor ADB finalizado com sucesso.")
         else:

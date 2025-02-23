@@ -63,7 +63,7 @@ def stop_core_back():
 #         if result.returncode == 0:  # Processos encontrados
 #             pids = result.stdout.strip().split('\n')  # Obtém todos os PIDs
 #             for pid in pids:
-#                 os.kill(int(pid), signal.SIGKILL)  # Envia SIGKILL para cada PID
+#                 os.kill.py(int(pid), signal.SIGKILL)  # Envia SIGKILL para cada PID
 #             messagebox.showinfo("Sucesso", "Processo core_back.py finalizado com sucesso!")
 #         else:
 #             messagebox.showinfo("Informação", "Nenhum processo core_back.py em execução.")

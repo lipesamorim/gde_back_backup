@@ -28,7 +28,7 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 # Caminho base do modelo YOLO a partir das variáveis de ambiente
 YOLO_MODEL_BASE_PATH = os.getenv('YOLO_MODEL_BASE_PATH', f'{BASE_PATH}/modelostreinados/')
 
-IP_OCULOS = "10.42.0.217"
+IP_OCULOS = "192.168.1.92"
 
 FPS = 15
 PROCESSING_LIMIT_SECONDS = 5
@@ -232,7 +232,7 @@ class YOLOProcessor:
                 try:
                     print(body)
                     mensagem = json.loads(body.decode())
-                    item_id = mensagem.get('itemId').lower()
+                        item_id = mensagem.get('itemId').lower()
                     quantity = mensagem.get('quantity')
                     model_name = mensagem.get('model')  # Campo opcional
                     filename = mensagem.get('fileName')  # Campo opcional
@@ -568,7 +568,7 @@ class YOLOProcessor:
         """
         Reinicia o servidor adb.
         """
-        result = subprocess.run(["adb", "kill-server"], capture_output=True)
+        result = subprocess.run(["adb", "kill.py-server"], capture_output=True)
         if result.returncode == 0:
             print("Servidor ADB finalizado com sucesso.")
         else:
